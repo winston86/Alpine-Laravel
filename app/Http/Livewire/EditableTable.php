@@ -3,8 +3,9 @@
 namespace App\Http\Livewire;
 
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use Livewire\Component;
-use Illuminate\Http\Request;
+use App\Models\Row;
 
 class EditableTable extends Component
 {
@@ -17,13 +18,28 @@ class EditableTable extends Component
     public function __construct($id = null)
     {
 
-//        Cache::flush();
         $rows = Cache::get('rows');
 
         if (!empty($rows))
             $this->rows = $rows;
 
         parent::__construct($id);
+    }
+
+    public function updateRows(array $rows)
+    {
+        DB::table("rows")
+            ->delete();
+
+        foreach ($rows as $i => $r){
+            $row = new Row([
+                'id' => $i,
+                'ACI' => $r['ACI']??'',
+                'IPT' => $r['IPT']??'',
+            ]);
+            $row->save();
+        }
+
     }
 
     public function updateRowCache(int $index, string $field, string $value)

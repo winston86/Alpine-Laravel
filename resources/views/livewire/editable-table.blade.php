@@ -47,7 +47,7 @@
                         </template>
                         <tr id="add-save">
                             <td class="col-3"><button @click="$wire.addRow()" type="button" class="btn btn-primary" >Add Row</button></td>
-                            <td class="col-3"><button @click="$refs.form.submit()" type="button" class="btn btn-success" >Save</button></td>
+                            <td class="col-3"><button @click="$wire.updateRows(rows).then(result => { $wire.$refresh; })" type="button" class="btn btn-success" >Save</button></td>
                         </tr>
                     </table>
                 </form>

@@ -20,5 +20,5 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [App\Http\Controllers\EditableTable::class, 'index'])
     ->name('editable-table');
 
-Route::post('/editable-table-update', [App\Http\Controllers\EditableTable::class, 'updateRows'])
+Route::post('/editable-table-update', [App\Http\Livewire\EditableTable::class, 'updateRows'])
     ->name('editable-table-update');
