@@ -3,73 +3,34 @@
 namespace App\Http\Livewire;
 
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\DB;
 use Livewire\Component;
-use App\Models\Row;
 
 class EditableTable extends Component
 {
 
-    public $rows = [[
-        'ACI' => '',
-        'IPT' => ''
-    ]];
+    public $rows;
 
-    public function __construct($id = null)
-    {
+    public $rows_json;
 
-        $rows = Cache::get('rows');
-
-        if (!empty($rows))
-            $this->rows = $rows;
-
-        parent::__construct($id);
-    }
-
-    public function updateRows(array $rows)
-    {
-        DB::table("rows")
-            ->delete();
-
-        foreach ($rows as $i => $r){
-            $row = new Row([
-                'id' => $i,
-                'ACI' => $r['ACI']??'',
-                'IPT' => $r['IPT']??'',
-            ]);
-            $row->save();
-        }
-
-    }
-
-    public function updateRowCache(int $index, string $field, string $value)
-    {
-        $this->rows[$index][$field] = $value;
-        Cache::put('rows', $this->rows);
-    }
-
-    public function removeRowCache(int $index)
-    {
-        $this->rows = Cache::get('rows', []);
-        unset($this->rows[$index]);
-        if (empty($this->rows))
-            $this->rows = [[
-                'ACI' => '',
-                'IPT' => ''
-            ]];
-
-        $this->rows = array_values($this->rows);
-        Cache::put('rows', $this->rows);
-    }
-
-    public function addRow()
-    {
-        array_push($this->rows, [
+    public function mount(){
+        $this->rows = Cache::get('rows', [[
             'ACI' => '',
             'IPT' => ''
-        ]);
+        ]]);
+        $this->rows_json = json_encode($this->rows);
+    }
+
+    #[On(’created’)]
+    public function refresh($rows)
+    {
+        $this->rows = [];
+        foreach ($rows as $i => $r){
+            $this->rows[$i] = [
+                'ACI' => $r['ACI']??'',
+                'IPT' => $r['IPT']??'',
+            ];
+        }
         Cache::put('rows', $this->rows);
-        return $this->rows;
     }
 
     public function render()

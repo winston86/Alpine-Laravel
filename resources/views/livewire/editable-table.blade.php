@@ -21,11 +21,10 @@
                 </g>
             </svg>
         </div>
-
         <div class="container-fluid">
-            <div x-data="{rows:  @entangle('rows')}" class="row">
-                <form x-ref="form" method="POST" action="/editable-table-update" enctype="multipart/form-data">
-                @csrf <!-- {{ csrf_field() }} -->
+            <div x-data="{rows: JSON.parse($wire.rows_json)}"  class="row">
+                <form  x-ref="form">
+{{--                    <input type="hidden" wire:model="rows_json" >--}}
                     <table class="table table-striped">
                         <tr class="table-row table-header">
                             <th class="col-2">#</th>
@@ -34,20 +33,20 @@
                             <th class="col-2">Actions</th>
                         </tr>
                         <template x-for="(row, index) in rows">
-                            <tr x-ref="'row-'+index" class="form-group">
+                            <tr class="form-group">
                                 <td class="col-2"  x-text="index+1"></td>
                                 <td class="col-4">
-                                    <input @keyup="$wire.updateRowCache(index, 'ACI', $event.target.value)" :name="'rows['+index+'][ACI]'" :value="row['ACI']" type="text" class="form-control">
+                                    <input x-model="rows[index]['ACI']" type="text" class="form-control">
                                 </td>
                                 <td class="col-4">
-                                    <input @keyup="$wire.updateRowCache(index, 'IPT', $event.target.value)" :name="'rows['+index+'][IPT]'" :value="row['IPT']" type="text" class="form-control">
+                                    <input x-model="rows[index]['IPT']" type="text" class="form-control">
                                 </td>
-                                <td class="col-2"><button  @click="$wire.removeRowCache(index)" type="button" class="btn btn-danger">Remove</button></td>
+                                <td class="col-2"><button @click="delete rows.splice(index, 1)" type="button" class="btn btn-danger">Remove</button></td>
                             </tr>
                         </template>
                         <tr id="add-save">
-                            <td class="col-3"><button @click="$wire.addRow()" type="button" class="btn btn-primary" >Add Row</button></td>
-                            <td class="col-3"><button @click="$wire.updateRows(rows).then(result => { $wire.$refresh; })" type="button" class="btn btn-success" >Save</button></td>
+                            <td class="col-3"><button type="button" @click="rows.push({ACI: '', IPT: ''})" class="btn btn-primary" >Add Row</button></td>
+                            <td class="col-3"><button type="button" @click="$wire.refresh(rows)" class="btn btn-success" >Save</button></td>
                         </tr>
                     </table>
                 </form>
