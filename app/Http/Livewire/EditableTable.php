@@ -10,27 +10,21 @@ class EditableTable extends Component
 
     public $rows;
 
-    public $rows_json;
+    public $rowsjson;
 
     public function mount(){
         $this->rows = Cache::get('rows', [[
             'ACI' => '',
             'IPT' => ''
         ]]);
-        $this->rows_json = json_encode($this->rows);
+        $this->rowsjson = json_encode($this->rows);
     }
 
-    #[On(’created’)]
-    public function refresh($rows)
+    public function updatedRowsjson($rows_json)
     {
-        $this->rows = [];
-        foreach ($rows as $i => $r){
-            $this->rows[$i] = [
-                'ACI' => $r['ACI']??'',
-                'IPT' => $r['IPT']??'',
-            ];
-        }
+        $this->rows = json_decode($rows_json);
         Cache::put('rows', $this->rows);
+        return $this->rows;
     }
 
     public function render()

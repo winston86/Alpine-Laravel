@@ -22,9 +22,9 @@
             </svg>
         </div>
         <div class="container-fluid">
-            <div x-data="{rows: JSON.parse($wire.rows_json)}"  class="row">
+            <div x-data="{rows: JSON.parse($wire.rowsjson)}"  class="row">
                 <form  x-ref="form">
-{{--                    <input type="hidden" wire:model="rows_json" >--}}
+                    <input type="hidden" wire:model.defer="rowsjson" >
                     <table class="table table-striped">
                         <tr class="table-row table-header">
                             <th class="col-2">#</th>
@@ -46,7 +46,7 @@
                         </template>
                         <tr id="add-save">
                             <td class="col-3"><button type="button" @click="rows.push({ACI: '', IPT: ''})" class="btn btn-primary" >Add Row</button></td>
-                            <td class="col-3"><button type="button" @click="$wire.refresh(rows)" class="btn btn-success" >Save</button></td>
+                            <td class="col-3"><button type="button" @click="$wire.rowsjson = JSON.stringify(rows); $wire.$refresh"  class="btn btn-success" >Save</button></td>
                         </tr>
                     </table>
                 </form>
